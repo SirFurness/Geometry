@@ -4,7 +4,7 @@ import Data.Set as S
 import Prelude as P
 
 data Point = Point [Char]
-               deriving (Show, Eq, Ord) --Ord is necessary of use in Set
+               deriving (Show, Eq, Ord) --Ord is necessary for use in Set
 
 data SubsetType = Line
             deriving (Show, Eq)
