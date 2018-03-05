@@ -13,7 +13,7 @@ data SpaceSubset = SpaceSubset { subsetType :: SubsetType,
                                  set :: Set Point,
                                  name :: [Char]
                                }
-                     deriving (Show)
+                     deriving (Show, Eq)
 
 type Geometry a = State (Set Point, [SpaceSubset]) a
 
@@ -46,16 +46,16 @@ putSubsets subsets = do
   put (points, subsets)
 
 
-addPoints :: [Point] -> Geometry ()
+addPoints :: Set Point -> Geometry ()
 addPoints points = do
   oldPoints <- getPoints
-  let newPoints = union oldPoints $ fromList points
+  let newPoints = union oldPoints points
   putPoints newPoints
 
-addSpaceSubset :: SubsetType -> [Point] -> [Char] -> Geometry SpaceSubset
+addSpaceSubset :: SubsetType -> Set Point -> [Char] -> Geometry SpaceSubset
 addSpaceSubset subsetType points name = do
   oldSubsets <- getSubsets
-  let line = SpaceSubset subsetType (fromList points) name
+  let line = SpaceSubset subsetType points name
   let newSubsets = line : oldSubsets
   putSubsets newSubsets
   return line
@@ -65,7 +65,7 @@ isLineNameValid lineName = do
   lines <- getLines
   return $ not $ any (lineName ==) $ P.map name lines
 
-makeLine :: [Point] -> [Char] -> Geometry ()
+makeLine :: Set Point -> [Char] -> Geometry ()
 makeLine points name = do
   isValidName <- isLineNameValid name
   if isValidName
